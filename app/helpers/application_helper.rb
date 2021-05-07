@@ -6,8 +6,8 @@ module ApplicationHelper
     end              
 
     def quantidade_carrinho
-        return 0 if cookies[:carrinho].blank?
-        return JSON.parse(cookies[:carrinho]).length
+        return 0 if cookies[:carrinho].blank?#retorna 0 se a quantidade de carrinho for 0
+        return JSON.parse(cookies[:carrinho]).length #retorna a quantidade de quantos produtos existe no cariinho
     end              
 
 end

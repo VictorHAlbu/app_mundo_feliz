@@ -1,20 +1,24 @@
 class EcommerceController < ApplicationController
     skip_before_action :valida_logado_admin 
     layout "site"
+
+    def cadastrar
+        @cliente = Cliente.new
+    end
     
     def index
         @produto = Produto.find(params[:produto_id])
     end
 
     def adicionar
-    if cookies[:carrinho].present?
-        produtos = JSON.parse(cookies[:carrinho]);
-    else
-        produtos = []
+    if cookies[:carrinho].present?#verifica se carrinho ta presente
+        produtos = JSON.parse(cookies[:carrinho]);#se tiver converte em json e joga no array de produtos
+    else  
+        produtos = [] #senão o array fica vazio
     end
 
-    produtos << params[:produto_id]
-    produtos.uniq!
+    produtos << params[:produto_id]#passa as informações do produto adicionado para produtos
+    produtos.uniq!#produto unico, ao add no carrinho, ele vai add uma vez sem repetir mesmo produto
 
     cookies[:carrinho] = {value: produtos.to_json, expires: 1.year.from_now, httponly: true}
     redirect_to "/"
@@ -37,8 +41,8 @@ class EcommerceController < ApplicationController
         return 
   end
   
-  produtos = JSON.parse(cookies[:carrinho]);
-  @produtos = Produto.where(id: produtos)
+  produtos = JSON.parse(cookies[:carrinho]);#converte cookes em JSOn e joga em um array de cookies
+  @produtos = Produto.where(id: produtos)#lista todos ids de produtos que estão adicionados no cookies de carrinho
   end
 
     def fechar_carrinho
@@ -51,10 +55,6 @@ class EcommerceController < ApplicationController
         
     end
 
-    def cadastrar
-       @cliente = Cliente.new 
-    end
-    
 
     def cadastrar_cliente
         @cliente = Cliente.new(cliente_params)

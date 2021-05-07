@@ -1,13 +1,13 @@
 <br>
 <h1>Carrinho</h1>
 <hr>
-
+<br>
 <% if @produtos.blank? %>
     <h5>Nenhum Produto Encontrado</h5>
       <% else %>
       <% @produtos.each do |produto| %>
-        <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card h-100">
+        <div class="col-lg-4">
+            <div class="card">
               <a href="/produto/<%= produto.id %>"><img class="card-img-top" src="<%= produto.imagem %>" 
               alt="<%= produto.nome %>"></a>
               <div class="card-body">
@@ -32,5 +32,6 @@
      <%end%> 
     </div>
     <div class="row"> 
-      <a href="/carrinho/fechar" class="btn btn-success" style="width: 50%; margin-bottom: 20px; font-size: 40px">Fechar</a>
+      <a href="/carrinho/fechar" class="btn btn-success" style=" width: 60%; margin-top: 10px;  margin: auto; margin-bottom: 20px; font-size: 40px">Fechar</a>
     </div>
+  

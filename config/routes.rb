@@ -19,7 +19,7 @@ Rails.application.routes.draw do
   get '/carrinho', to: 'ecommerce#carrinho'
   get '/carrinho/fechar', to: 'ecommerce#fechar_carrinho'
   get '/cliente/logar', to: 'ecommerce#login'
-  get '/cliente/cliente/cadastrar', to: 'ecommerce#cadastrar'
+  get '/cliente/cadastrar', to: 'ecommerce#cadastrar'
   post '/cliente/criar', to: 'ecommerce#cadastrar_cliente'
   
   

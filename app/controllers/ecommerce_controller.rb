@@ -1,11 +1,21 @@
 class EcommerceController < ApplicationController
-    skip_before_action :valida_logado_admin 
+    skip_before_action :valida_logado_admin
+    skip_before_action :verify_authenticity_token 
     layout "site"
 
     def cadastrar
         @cliente = Cliente.new
     end
-    
+
+    def cadastrar_cliente
+        @cliente = Cliente.new(cliente_params)
+        if @cliente.save
+            redirect_to "/carrinho/fechar"
+        else
+            render :cadastrar
+        end    
+    end
+
     def index
         @produto = Produto.find(params[:produto_id])
     end
@@ -25,50 +35,38 @@ class EcommerceController < ApplicationController
    end 
 
    def remover
-    if cookies[:carrinho].blank?
-        redirect_to "/"
-        return
+        if cookies[:carrinho].blank?
+            redirect_to "/"
+            return
+        end
+        produtos = JSON.parse(cookies[:carrinho]);
+        produtos.delete(params[:produto_id])
+        cookies[:carrinho] = {value: produtos.to_json, expires: 1.year.from_now, httponly: true}
+        redirect_to "/carrinho"
     end
-    produtos = JSON.parse(cookies[:carrinho]);
-    produtos.delete(params[:produto_id])
-    cookies[:carrinho] = {value: produtos.to_json, expires: 1.year.from_now, httponly: true}
-    redirect_to "/carrinho"
-  end
 
-  def carrinho
-    if cookies[:carrinho].blank?
-        redirect_to "/"
-        return 
-  end
-  
-  produtos = JSON.parse(cookies[:carrinho]);#converte cookes em JSOn e joga em um array de cookies
-  @produtos = Produto.where(id: produtos)#lista todos ids de produtos que estão adicionados no cookies de carrinho
-  end
+    def carrinho
+        if cookies[:carrinho].blank?
+            redirect_to "/"
+            return 
+        end
+    
+        produtos = JSON.parse(cookies[:carrinho]);#converte cookes em JSOn e joga em um array de cookies
+        @produtos = Produto.where(id: produtos)#lista todos ids de produtos que estão adicionados no cookies de carrinho
+    end
 
     def fechar_carrinho
         if cookies[:cliente_login].blank?
         redirect_to "/cliente/logar"
         return    
+        end
     end
 
     def login
-        
     end
 
-
-    def cadastrar_cliente
-        @cliente = Cliente.new(cliente_params)
-        if cliente.save
-            redirect_to "/carrinho/fechar"
-        else
-            redirect_to "/cliente/cadastrar/cadastrar"
-        end    
+    private
+    def cliente_params
+      params.require(:cliente).permit(:nome, :cpf, :telefone, :email, :cep, :endereco, :numero, :bairro, :cidade, :estado, :senha)
     end
-
-      private
-        def cliente_params
-            params.require(:cliente).permit(:nome, :cpf, :telefone, :email, :endereco, :numero, :bairro, :cidade, :estado, :senha)
-        end
-        
-  end 
 end

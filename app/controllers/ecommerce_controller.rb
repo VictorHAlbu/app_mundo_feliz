@@ -10,6 +10,14 @@ class EcommerceController < ApplicationController
     def cadastrar_cliente
         @cliente = Cliente.new(cliente_params)
         if @cliente.save
+            cookies[:cliente_login] = { #depois que cadastrar guarda o cookie do cliente
+                value: {#informaões guardadas no cookie de cliente
+                    id: @cliente.id,
+                    nome: @cliente.nome,
+                    email: @cliente.email
+                }, 
+                expires: 1.year.from_now, httponly: true
+            }
             redirect_to "/carrinho/fechar"
         else
             render :cadastrar
@@ -60,6 +68,15 @@ class EcommerceController < ApplicationController
         redirect_to "/cliente/logar"
         return    
         end
+        #veririfa se carrinho ta em branco, senão tiver preeche o cookies[:carrinho]
+        #E vai retornar no fechar_carrinhos todos produtos que etão no carrinho
+        if cookies[:carrinho].blank?
+            redirect_to "/"
+            return 
+        end
+    
+        produtos = JSON.parse(cookies[:carrinho]);#converte cookes em JSOn e joga em um array de cookies
+        @produtos = Produto.where(id: produtos)#lista todos ids de produtos que estão adicionados no cookies de carrinho
     end
 
     def login

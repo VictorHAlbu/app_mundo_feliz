@@ -15,14 +15,19 @@ class EcommerceController < ApplicationController
                     id: @cliente.id,
                     nome: @cliente.nome,
                     email: @cliente.email
-                }, 
+                }.to_json, 
                 expires: 1.year.from_now, httponly: true
-            }
+                }
             redirect_to "/carrinho/fechar"
         else
             render :cadastrar
         end    
     end
+
+    def sair
+        cookies[:cliente_login] = nil
+        redirect_to "/"
+    end 
 
     def index
         @produto = Produto.find(params[:produto_id])
@@ -80,6 +85,24 @@ class EcommerceController < ApplicationController
     end
 
     def login
+    end
+
+    def fazer_login_cliente
+        clientes = Cliente.where(email: params[:email], senha: params[:senha]) #busca no banco
+        if clientes.count > 0 #se for mais que 0
+            cliente = clientes.first #a variavel Cliente vai receber o primeiro""first" que foi encontrado no banco[Cliente,email - senha]
+            time = params[:lembrar] == "1" ? 1.year.from_now : 30.minutes.from_now
+            value ={
+                id: Cliente.id,
+                nome: Cliente.nome,
+                email: Cliente.email
+            }
+            cookies[:cliente_login] = {value: value.to_json, expires: time, httponly: true}
+            redirect_to "/carrinho/fechar"
+        else
+            flash[:error] = "Email ou senha inválidos"
+            redirect_to "/cliente/logar"
+        end        
     end
 
     private

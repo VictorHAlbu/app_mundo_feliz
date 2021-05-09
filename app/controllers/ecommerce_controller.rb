@@ -69,12 +69,12 @@ class EcommerceController < ApplicationController
     end
 
     def fechar_carrinho
-        if cookies[:cliente_login].blank?
+        if cookies[:cliente_login].blank?#se cokies de cliente não tiver preechido logue-se
         redirect_to "/cliente/logar"
         return    
         end
         #veririfa se carrinho ta em branco, senão tiver preeche o cookies[:carrinho]
-        #E vai retornar no fechar_carrinhos todos produtos que etão no carrinho
+        #E vai retornar no fechar_carrinhos todos produtos que estão no carrinho
         if cookies[:carrinho].blank?
             redirect_to "/"
             return 
@@ -93,9 +93,9 @@ class EcommerceController < ApplicationController
             cliente = clientes.first #a variavel Cliente vai receber o primeiro""first" que foi encontrado no banco[Cliente,email - senha]
             time = params[:lembrar] == "1" ? 1.year.from_now : 30.minutes.from_now
             value ={
-                id: Cliente.id,
-                nome: Cliente.nome,
-                email: Cliente.email
+                id: cliente.id,
+                nome: cliente.nome,
+                email: cliente.email
             }
             cookies[:cliente_login] = {value: value.to_json, expires: time, httponly: true}
             redirect_to "/carrinho/fechar"

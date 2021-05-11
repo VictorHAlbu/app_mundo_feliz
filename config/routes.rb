@@ -22,6 +22,7 @@ Rails.application.routes.draw do
   post '/cliente/login', to: 'ecommerce#fazer_login_cliente'
   get '/cliente/cadastrar', to: 'ecommerce#cadastrar'
   post '/cliente/criar', to: 'ecommerce#cadastrar_cliente'
+  patch '/cliente/criar', to: 'ecommerce#cadastrar_cliente'
   get '/cliente/sair', to: 'ecommerce#sair'
   
   

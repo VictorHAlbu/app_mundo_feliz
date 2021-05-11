@@ -4,10 +4,16 @@ class EcommerceController < ApplicationController
     layout "site"
 
     def cadastrar
-        @cliente = Cliente.new
-    end
+        if cookies[:cliente_login].blank?#veirfica se cokies cliente está em branco
+            @cliente = Cliente.new# se tiver cadastar um novo cliente
+        else
+            c = JSON.parse(cookies[:cliente_login]);#senão pega cokies cliente converte em JSON e atribui a C
+            @cliente =  Cliente.find(c["id"])#então a instacia @cliente vai receber
+        end                                 #busca o cokie do cliente logando igual id do cliente no banco cadastrado        
+    end #vai retornar cliente preenchido como se fosse o EDIT
 
     def cadastrar_cliente
+        if cookies[:cliente_login].blank?
         @cliente = Cliente.new(cliente_params)
         if @cliente.save
             cookies[:cliente_login] = { #depois que cadastrar guarda o cookie do cliente
@@ -21,7 +27,25 @@ class EcommerceController < ApplicationController
             redirect_to "/carrinho/fechar"
         else
             render :cadastrar
-        end    
+        end 
+        else
+            c = JSON.parse(cookies[:cliente_login]);#senão pega cokies cliente converte em JSON e atribui a C
+            @cliente =  Cliente.find(c["id"])#então a instacia @cliente vai receber
+            if @cliente.update(cliente_params)#atualiza a instancia de cliente
+                cookies[:cliente_login] = { 
+                    value: {
+                        id: @cliente.id,
+                        nome: @cliente.nome,
+                        email: @cliente.email
+                    }.to_json, 
+                    expires: 1.year.from_now, httponly: true
+                    }
+                    flash[:success] = "Cliente Atualizado com Sucesso"
+                redirect_to "/"
+            else
+                render :cadastrar
+            end 
+        end   
     end
 
     def sair

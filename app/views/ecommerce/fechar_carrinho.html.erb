@@ -1,7 +1,9 @@
-<br>
-<h1>Carrinho</h1>
+<div class="row">
+  <h1>Carrinho</h1>
+</div>
 <hr>
 <br>
+<div class="row">
   <ul>
       <% @produtos.each do |produto| %>
               <li>
@@ -10,6 +12,9 @@
         <%end%>
   </ul>  
 </div>
+<h1> 
+  Valor Total: R$<%= @produtos.sum(:valor) %>
+</h1>
 <div class="row"> 
   <a href="/carrinho/fechar" class="btn btn-success" style=" width: 60%; margin-top: 10px;  margin: auto; margin-bottom: 20px; font-size: 40px">Concluir Compra</a>
 </div>

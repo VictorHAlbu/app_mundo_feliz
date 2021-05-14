@@ -13,8 +13,3 @@
  *= require_tree .
  *= require_self
  */
-
-.formCliente {
-  max-width: 450px;
-  margin: auto;
-}

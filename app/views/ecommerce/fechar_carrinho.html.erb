@@ -1,21 +1,93 @@
-<div class="row">
-  <h1>Carrinho</h1>
-</div>
-<hr>
-<br>
-<div class="row">
-  <ul>
+<div class="pagamento">
+  <input type="hidden" id="nome" value="<%= cliente.nome_tratado %>">
+  <input type="hidden" id="sobrenome"  value="<%= cliente.sobrenome %> dos santos">
+  <input type="hidden" id="cliente_id"  value="<%= cliente.id %>">
+  <div class="row">
+    <h1>Carrinho</h1>
+  </div>
+  <hr>
+  <div class="row">
+    <ul>
       <% @produtos.each do |produto| %>
-              <li>
-                <%= produto.nome %> - R$<%= produto.valor %>
-              </li>
-        <%end%>
-  </ul>  
+        <li>
+          <%= produto.nome %> - R$<%= produto.valor %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+  <h1>
+    Valor total: R$ <%= @produtos.sum(:valor).round(2) %>
+  </h1>
+
+  <script src="https://js.iugu.com/v2"></script>
+  <div style="text-align: center;">
+
+    <h1>
+      Gerar boleto <br>
+      <a href="">
+        <img src="https://dourasoft.com.br/site/dourasoft2017/wp-content/uploads/2016/02/atualizar-boleto-1.png" style="width: 200px">
+      </a>
+    </h1>
+    <fieldset>
+      <legend>Dados do boleto:</legend>
+
+      <label>CPF:</label> <input type="text" id="cpf" value="<%= cliente.cpf %>"><br>
+      <label>Telefone:</label> <input type="text" id="telefone" value="<%= cliente.telefone %>"><br>
+      <label>Email:</label> <input type="text" id="email" value="<%= cliente.email %>"><br>
+      <label>Numero:</label> <input type="text" id="numero" value="<%= cliente.numero %>"><br>
+      <label>Bairro:</label> <input type="text" id="bairro" value="<%= cliente.bairro %>"><br>
+      <label>Cidade:</label> <input type="text" id="cidade" value="<%= cliente.cidade %>"><br>
+      <label>Estado:</label> <input type="text" id="estado" value="<%= cliente.estado %>"><br>
+    </fieldset>
+    <br>
+    <a href="javascript:;" onclick="mundofeliz.pagamentoBoleto()" class="btn btn-success" style="width: 100%;margin-bottom: 20px;font-size: 40px">Gerar boleto</a>
+    <br>
+    <hr>
+    <h1>
+      <a href="">
+        <img src="https://cdn-0.imagensemoldes.com.br/wp-content/uploads/2020/06/Desenho-Cart%C3%A3o-de-Cr%C3%A9dito-PNG.png" style="width: 200px">
+      </a>
+    </h1>
+
+    <fieldset>
+      <legend>Dados do cartão:</legend>
+      <label>Número:</label> <input type="text" id="number"><br>
+      <label>Mes:</label> <input type="number" id="mes"><br>
+      <label>Ano:</label> <input type="number" id="ano"><br>
+      <label>CVV:</label> <input type="number" id="cvv"><br>
+    </fieldset>
+    <br>
+    <br>
+
+    <a href="javascript:;" onclick="mundofeliz.pagamentoCartao()" class="btn btn-success" style="width: 100%;margin-bottom: 20px;font-size: 40px">Pagar com cartão</a>
+
+    <br>
+    <br>
+    <br>
+  </div>
 </div>
-<h1> 
-  Valor Total: R$<%= @produtos.sum(:valor) %>
-</h1>
-<div class="row"> 
-  <a href="/carrinho/fechar" class="btn btn-success" style=" width: 60%; margin-top: 10px;  margin: auto; margin-bottom: 20px; font-size: 40px">Concluir Compra</a>
-</div>
-  
+<script type="text/javascript">
+  var mundofeliz ={}
+  mundofeliz.pagamentoCartao = function(){
+    var pg_id = "51994850B25A26542D856465CA57F00C"
+    
+    Iugu.setTestMode(true);
+    Iugu.setAccountID(pg_id);
+    Iugu.setup();
+    
+    cc = Iugu.CreditCard("4111111111111111", 
+                     "12", "2025", "Nome", 
+                     "Sobrenome", "123");
+
+    Iugu.createPaymentToken(cc, function(data) {
+     
+        if (data.errors) {
+            alert("Erro salvando cartão");
+            console.log(data.errors);
+        } else {
+            var token = data.id;
+            alert("Token evniado com success"+ token + ".")
+        }   
+    });
+}
+</script>
